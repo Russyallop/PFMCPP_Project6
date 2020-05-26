@@ -28,10 +28,11 @@ struct T
 
 struct T2                                //4
 {
-    const T& compare(const T& a, const T& b) //5
+    const T* compare(const T& a, const T& b) //5
     {
-        if( a.value < b.value ) return a;
-        else return b;      
+        if( a.value < b.value ) return &a;
+        if( a.value > b.value ) return &b;
+        return nullptr;      
     }
 };
 
@@ -73,9 +74,10 @@ int main()
     T value2( 5, "five" );                                             //6
     
     T2 f;                                            //7
-    const auto& smaller = f.compare( value1 , value2 );
+    const auto* smaller = f.compare( value1 , value2 );
+    if( smaller != nullptr )
     {//8
-        std::cout << "the smaller one is << " << smaller.name << std::endl;
+        std::cout << "the smaller one is << " << smaller->name << std::endl;
     }
     //9
     
