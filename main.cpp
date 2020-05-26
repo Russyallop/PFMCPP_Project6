@@ -28,26 +28,19 @@ struct T
 
 struct T2                                //4
 {
-    T* compare(T* a, T* b) //5
+    const T& compare(const T& a, const T& b) //5
     {
-        if( a || b == nullptr ) 
-            return nullptr;
-        
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
-        return nullptr;
+        if( a.value < b.value ) return a;
+        else return b;      
     }
 };
 
 struct U
 {
     float targetValue { 0.0f }, uValue { 0.0f };
-    float uSquare(float* targetValueIn)      //12
+    float uSquare(const float& targetValueIn)      //12
     {
-        if( targetValueIn == nullptr) 
-            return 0;
-      
-        targetValue = *targetValueIn;
+        targetValue = targetValueIn;
         while( std::abs(uValue - targetValue) > 0.001f )
         {
             uValue += -0.5f * (uValue - targetValue);
@@ -58,38 +51,21 @@ struct U
 
 struct W
 {
-    static float wSquare( U* that, float* targetValue )        //10
+    static float wSquare( U& that, const float& targetValue )        //10
     {
-        if(that  == nullptr) 
-            return 0;
-        if(targetValue == nullptr) 
-            return 0;
-        
-        std::cout << "U's targetValue value: " << that->targetValue << std::endl;
-        that->targetValue = *targetValue;
-        std::cout << "U's targetValue updated value: " << that->targetValue << std::endl;
-        while( std::abs( that->uValue - that->targetValue ) > 0.001f )
+
+        std::cout << "U's targetValue value: " << that.targetValue << std::endl;
+        that.targetValue = targetValue;
+        std::cout << "U's targetValue updated value: " << that.targetValue << std::endl;
+        while( std::abs( that.uValue - that.targetValue ) > 0.001f )
         {
-            that->uValue += -0.5f * ( that->uValue - that->targetValue );
+            that.uValue += -0.5f * ( that.uValue - that.targetValue );
         }
-        std::cout << "U's uValue updated value: " << that->uValue << std::endl;
-        return that->uValue * that->uValue;
+        std::cout << "U's uValue updated value: " << that.uValue << std::endl;
+        return that.uValue * that.uValue;
     }
 };
         
-/*
- MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
-
- Commit your changes by clicking on the Source Control panel on the left, entering a message, and click [Commit and push].
- 
- If you didn't already: 
-    Make a pull request after you make your first commit
-    pin the pull request link and this repl.it link to our DM thread in a single message.
-
- send me a DM to review your pull request when the project is ready for review.
-
- Wait for my code review.
- */
 
 int main()
 {
@@ -97,17 +73,16 @@ int main()
     T value2( 5, "five" );                                             //6
     
     T2 f;                                            //7
-    auto* smaller = f.compare( &value1 , &value2 );
-    if( smaller != nullptr )
+    const auto& smaller = f.compare( value1 , value2 );
     {//8
-        std::cout << "the smaller one is << " << smaller << std::endl;
+        std::cout << "the smaller one is << " << smaller.name << std::endl;
     }
     //9
     
     U u1;
     float updatedValue = 5.f;
-    std::cout << "[static func] u1's multiplied values: " << W::wSquare( &u1, &updatedValue ) << std::endl;                  //11
+    std::cout << "[static func] u1's multiplied values: " << W::wSquare( u1, updatedValue ) << std::endl;                  //11
     
     U u2;
-    std::cout << "[member func] u2's multiplied values: " << u2.uSquare( &updatedValue ) << std::endl;
+    std::cout << "[member func] u2's multiplied values: " << u2.uSquare( updatedValue ) << std::endl;
 }
